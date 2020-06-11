@@ -1,5 +1,5 @@
 # MSEngine ZA Ultra
-## My journey creating a zero allocation minesweeper engine and solver
+### My journey creating a zero allocation minesweeper engine and solver
 
 Before I begin this series of posts documenting this project, I have a confession to make.
 
@@ -7,7 +7,7 @@ Before I begin this series of posts documenting this project, I have a confessio
 
 It seems somewhat ironic to spend countless hours programming such an iconic game and never bother to manually play it. It's really just a combination of not wanting to play from the CLI or build out a front end. If I do ever get around to it, it will definitely be with Unity though. Or maybe the canvas with React. Or Blazor. Probably best to limit the scope, since this has already taken vastly longer than originally anticipated.
 
-### What/Why is MSEngine ZA Ultra?
+## What/Why is MSEngine ZA Ultra?
 
 The initial goal of this project was just to create a simple minesweeper engine containing all the required game logic, but without the UI. I wanted to contribute my first open source project and NuGet package that someone could actually use and implement a full minesweeper game with. (Whether someone has taken on that endeavor, I don't know). I also wanted to experiment with automated testing, since my programming career has not yet afforded that possibility.
 
@@ -15,7 +15,7 @@ After the initial engine was created along with a suite of tests, I figured it o
 
 Anyway, after writing a ton of code and eventually getting bored, I needed to think of something to renew my interest in continuing this project. There are three main overlapping drivers for this project now; a matrix/linear algebra based solver, a desire for blazing performance, and learning/using SIMD/instrinsics.
 
-### A Few Notes before the Journey Begins
+## A Few Notes before the Journey Begins
 
 *Minesweeper/solver is simple to learn, but brutally and deceptively difficult to implement*
 
@@ -36,6 +36,42 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 * You could write an entire PhD on implementing a probabilistic solver using AI/ML, because the scope is so vast. To my knowledge, nothing like that even exists yet.
 
 * There is still a ton I don't know, and some stuff I definitely got wrong. Please let me know if you find anything. 
+
+## Show me your code
+The most complicated aspect of any minesweeper engine is without a doubt the "Chain Reaction" logic. Revealing a node with zero adjacement mines will trigger this chain reaction, revealing other nodes and cascading this behavior until certain boundaries are encountered (flags/mines). I've refactored this snippet of code a ton already, but there is still room for improvement. It may look simple/clean now, but the initial version was an ugly mess (something I assume most people encounter). 
+
+```c#
+ internal static void VisitNode(Matrix<Node> matrix, int nodeIndex, ReadOnlySpan<int> visitedIndexes, Span<int>.Enumerator enumerator)
+ {
+     Debug.Assert(nodeIndex >= 0);
+
+     enumerator.Current = nodeIndex;
+     var pass = enumerator.MoveNext();
+     Debug.Assert(pass);
+
+     Span<int> buffer = stackalloc int[MaxNodeEdges];
+     buffer.FillAdjacentNodeIndexes(matrix.Nodes.Length, nodeIndex, matrix.ColumnCount);
+
+     foreach (var i in buffer)
+     {
+         if (i == -1) { continue; }
+
+         ref var node = ref matrix.Nodes[i];
+
+         if (node.State == NodeState.Flagged) { continue; }
+
+         if (node.State == NodeState.Hidden)
+         {
+             node = new Node(node, NodeOperation.Reveal);
+         }
+
+         if (node.MineCount == 0 && !visitedIndexes.Contains(i))
+         {
+             VisitNode(matrix, i, visitedIndexes, enumerator);
+         }
+     }
+ }
+```
 
 ## Ok then
 
