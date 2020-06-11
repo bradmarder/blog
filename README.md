@@ -9,7 +9,7 @@ It seems somewhat ironic to spend countless hours programming such an iconic gam
 
 ### What/Why is MSEngine ZA Ultra?
 
-The initial goal of this project was just to create a simple minesweeper engine containing all the required game logic, but without the UI. I wanted to be contribute my first open source project and NuGet package that someone could actually use and implement a full minesweeper game with. (Whether someone has taken on that endeavor, I don't know). I also wanted to experiment with automated testing, since my programming career has not yet afforded that possibility.
+The initial goal of this project was just to create a simple minesweeper engine containing all the required game logic, but without the UI. I wanted to contribute my first open source project and NuGet package that someone could actually use and implement a full minesweeper game with. (Whether someone has taken on that endeavor, I don't know). I also wanted to experiment with automated testing, since my programming career has not yet afforded that possibility.
 
 After the initial engine was created along with a suite of tests, I figured it only made sense to take a stab at implementing an automated solver. I did not realize at the time what a rabbit hole this would take me down. To this day, I'm still not sure I understand the true scope of a probabilistic solver. 
 
@@ -27,7 +27,7 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 * Every single time I read over the code, I managed to find possible performance enhancements. It always felt good to pick the low hanging fruit, but there was always the oppurtunity to shave off a few microseconds by some obscure technique.
 
-* Achieving zero allocations felt like a great accomplishment. Without a doubt, it made parts of the code *uglier*, and the inability to use LINQ is depressing, but zero allocations are a requirement to ultra performance. 
+* Achieving zero allocations felt like a great accomplishment. Without a doubt, it made parts of the code *uglier*, and the inability to use LINQ is depressing, but zero allocations are a requirement for ultra performance. 
 
 * Ensuring the mines are randomly/cryptographically scattered is more difficult than I initially assumed.
 
