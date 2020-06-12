@@ -29,7 +29,7 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 ![minesweeper bug after reveal](/Images/BugAfterReveal.jpg)
 
-Seems like an obvious bug to me. Maybe this logic is true to the original windows 3.1 version? This is something I would like to explore further. Once again, this realisticly doesn't impact normal play, but could potentially interfere with an AI/ML approach.
+Seems like an obvious bug to me. Maybe this logic is true to the original windows 3.1 version? This is something I would like to explore further. Once again, this realistically doesn't impact normal play, but could potentially interfere with an AI/ML approach.
 
 * Minesweeper intermediate/expert boards are defined at 16/16/40 and 30/16/99, but beginner boards can be considered 8/8/10 or 9/9/10. 
 
@@ -72,7 +72,7 @@ The most complicated aspect of any minesweeper engine is without a doubt the "Ch
 
          if (node.State == NodeState.Hidden)
          {
-             node = new Node(node, NodeOperation.Reveal);
+             node = new Node(node, NodeState.Revealed);
          }
 
          if (node.MineCount == 0 && !visitedIndexes.Contains(i))
