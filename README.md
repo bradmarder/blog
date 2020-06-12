@@ -21,6 +21,16 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 * If you google minesweeper and play the game on the 2nd link, you may encounter one of the first bugs/edge cases I came across. Imagine a corner tile (or Node as I prefer) surrounded by flags. What should happen if you reveal the corner node and it *does not* contain a mine, and the three flags surrounding it *do not* actually have mines either? It's a weird edge case that I wouldn't expect to occur naturally, but is precisely the type of case I want my engine/tests to consider. (I believe the correct (and original) minesweeper engines would prevent the node revealing chain reaction).
 
+* Even the *first* online minesweeper link has a bizarre bug. Consider the following game...what should happen if the green node is revealed *and* has zero adjacent mines? We can clearly see the top left node has zero adjacent mines...therefore the blue node below definitely does not have a mine. 
+
+![minesweeper bug before reveal](/Images/BugBeforeReveal.jpg)
+
+..and the aftermath
+
+![minesweeper bug after reveal](/Images/BugAfterReveal.jpg)
+
+Seems like an obvious bug to me. Maybe this logic is true to the original windows 3.1 version? This is something I would like to explore further. Once again, this realisticly doesn't impact normal play, but could potentially interfere with an AI/ML approach.
+
 * Minesweeper intermediate/expert boards are defined at 16/16/40 and 30/16/99, but beginner boards can be considered 8/8/10 or 9/9/10. 
 
 * Some implementations ensure the first revealed node does not have a mine, and has an adjacent mine count of zero. Personally, I prefer that approach because otherwise you may be forced to guess on *the second turn*, which significantly reduces the odds of winning.
