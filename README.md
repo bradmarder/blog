@@ -25,7 +25,7 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 ![minesweeper bug before reveal](/Images/BugBeforeReveal.jpg)
 
-..and the aftermath
+..and the aftermath. Note the blue node remains *hidden*.
 
 ![minesweeper bug after reveal](/Images/BugAfterReveal.jpg)
 
