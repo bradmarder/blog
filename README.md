@@ -86,3 +86,5 @@ The most complicated aspect of any minesweeper engine is without a doubt the "Ch
 ## Ok then
 
 I think that is enough for this first post. In the next, I want to discuss deterministic solver strategies, and why that is so difficult to code.
+
+[Part Two - The Solver](/blog/minesweeper-solver)
