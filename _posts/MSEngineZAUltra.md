@@ -1,3 +1,10 @@
+---
+layout: post
+title:  "MSEngine ZA Ultra"
+date:   2020-06-16 13:35:03 -0400
+categories: minesweeper
+---
+
 # MSEngine ZA Ultra
 ### My journey creating a zero allocation minesweeper engine and solver
 
@@ -17,7 +24,7 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 ## A Few Notes before the Journey Begins
 
-*Minesweeper/solver is simple to learn, but brutally and deceptively difficult to implement*
+* Minesweeper/solver is simple to learn, but brutally and deceptively difficult to implement
 
 * If you google minesweeper and play the game on the 2nd link, you may encounter one of the first bugs/edge cases I came across. Imagine a corner tile (or Node as I prefer) surrounded by flags. What should happen if you reveal the corner node and it *does not* contain a mine, and the three flags surrounding it *do not* actually have mines either? It's a weird edge case that I wouldn't expect to occur naturally, but is precisely the type of case I want my engine/tests to consider. (I believe the correct (and original) minesweeper engines would prevent the node revealing chain reaction).
 
