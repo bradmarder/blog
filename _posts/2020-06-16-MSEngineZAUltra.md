@@ -2,7 +2,6 @@
 layout: default
 title:  "MSEngine ZA Ultra"
 date:   2020-06-16 13:35:03 -0400
-permalink: /msengine-za-ultra/
 categories: minesweeper
 ---
 
@@ -95,4 +94,4 @@ The most complicated aspect of any minesweeper engine is without a doubt the "Ch
 
 I think that is enough for this first post. In the next, I want to discuss deterministic solver strategies, and why that is so difficult to code.
 
-[Part Two - The Solver](/blog/minesweeper-solver)
+[Part Two - The Solver]({% post_url minesweeper-solver %})

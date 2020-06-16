@@ -1,3 +1,10 @@
+---
+layout: default
+title:  "Minesweeper Solver Strategies"
+date:   2020-06-16 13:35:03 -0400
+categories: minesweeper
+---
+
 # Minesweeper Solver Strategy Chaos
 
 With the minesweeper engine complete and tested, it was only natural to attempt to create a solver. A quick glance at this [site](http://www.minesweeper.info/wiki/Strategy) gave me a false sense of confidence. I assumed I could just grind out some code and hammer away at it until it would "solve" every puzzle I threw at it (except guessing of course). This is just *one* of the strategies I employed, and even with LINQ, this was a complete eyesore.
