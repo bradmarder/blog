@@ -31,11 +31,11 @@ Anyway, after writing a ton of code and eventually getting bored, I needed to th
 
 * Even the *first* online minesweeper link has a bizarre bug. Consider the following game...what should happen if the green node is revealed *and* has zero adjacent mines? We can clearly see the top left node has zero adjacent mines...therefore the blue node below definitely does not have a mine. 
 
-![minesweeper bug before reveal](/Images/BugBeforeReveal.jpg)
+![minesweeper bug before reveal](/blog/Images/BugBeforeReveal.jpg)
 
 ..and the aftermath. Note the blue node remains *hidden*.
 
-![minesweeper bug after reveal](/Images/BugAfterReveal.jpg)
+![minesweeper bug after reveal](/blog/Images/BugAfterReveal.jpg)
 
 Seems like an obvious bug to me. Maybe this logic is true to the original windows 3.1 version? This is something I would like to explore further. Once again, this realistically doesn't impact normal play, but could potentially interfere with an AI/ML approach.
 
