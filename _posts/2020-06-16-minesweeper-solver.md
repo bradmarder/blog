@@ -88,3 +88,5 @@ With the minesweeper engine complete and tested, it was only natural to attempt 
 ```
 
 Technically this worked. And this is only one of the four strategies. At the time, I felt content with the project and decided to leave it as is. But over the course of the next two years, I had this nagging suspicion there must be a cleaner approach. If this was posted on codegolf.stackexchange.com, I have no doubt some genius would come up with an APL solution that is less than 10 bytes or something equally absurd. I knew in the back of my mind there had be *some* way to use a matrix, execute an obscure mathematical algorithm and obtain a set of turns. Fast forward two years...
+
+{% include minesweeper.html %}
