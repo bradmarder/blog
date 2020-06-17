@@ -2,7 +2,7 @@
 layout: default
 title:  "Minesweeper Solver Strategies"
 date:   2020-06-16 13:35:03 -0400
-categories: minesweeper
+tags: minesweeper
 ---
 
 # Minesweeper Solver Strategy Chaos
