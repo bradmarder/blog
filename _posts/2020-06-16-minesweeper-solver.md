@@ -89,4 +89,129 @@ With the minesweeper engine complete and tested, it was only natural to attempt 
 
 Technically this worked. And this is only one of the four strategies. At the time, I felt content with the project and decided to leave it as is. But over the course of the next two years, I had this nagging suspicion there must be a cleaner approach. If this was posted on codegolf.stackexchange.com, I have no doubt some genius would come up with an APL solution that is less than 10 bytes or something equally absurd. I knew in the back of my mind there had be *some* way to use a matrix, execute an obscure mathematical algorithm and obtain a set of turns. Fast forward two years...
 
+I finally took the plunge and did a google search for "minesweeper matrix solver" and came across this post by [Robert Massaioli](https://massaioli.wordpress.com/2013/01/12/solving-minesweeper-with-matricies/). The basic gist of this approach is to use linear algebra, create an augmented matrix, apply gaussian elimination (reduced row echelon form), and then apply some heuristics to the resulting matrix in order to determine which nodes may be flagged/revealed. The approach seemed simple and beautiful and exactly what I was looking for. Mission accomplished. I ran millions of iterations and it seemed to work flawlessly...except when it didn't.
+
+Part of my testing strategy has been to compare "stalemate" boards between my original approach and the matrix technique (stalemate implying board is complete or requires guessing). I started to notice a few cases where my approach would calculate a turn and the matrix version would not. Naturally I assumed I had a bug in my implementation. There definitely could not be anything "wrong" with matrix version for two reasons. 1) There is a blog post about it 2) It's just linear algebra at it's core. So I applied lots of standard debugging behavior, hammering away at the code, testing, deciphering rosetta stones etc. I eventually discovered a board which defied explanation. 
+
+```
+00001_10
+11212_10
+1!2!2110
+22312_10
+2!201_32
+3!3112__ <-- these 2 hidden nodes may be safely flagged
+________
+________
+```
+
+The matrix solver was unable to calculate any turns for this board. It was just cursed in some manner. Maybe the board had some impossible configuration? Perhaps my code had some obscure bug that only manifested itself with such a specific configuration? After much more head scratching and deliberation, I finally came to a penultimate conclusion.
+
+### The matrix solver simply doesn't (always) work (as described in the blog post)
+
+The author included a link to his c++ code which perhaps had different behavior than described in his post, but I didn't investigate (my c++ is f--). Why this board configuration isn't handled properly, I do not know. My best guess at this point in time is that we somehow "lose" critical information when we apply guassian elimination, and the resulting matrix is insufficient. This revelation depressed me. If anyone reading this has any insight into this matter, I would love to know. Defeated, I resorted to some recursive heuristics to manipulate the matrix pre-guassian-elimination and calculate some turns. The following code is ugly, but it works, is performant, and solves the problem for now. I also added some tests for this specific case so the solver will never regress, and perhaps a future iteration *will* be able to handle it.
+
+```c#
+private static void ReduceMatrix(
+    Matrix<Node> nodeMatrix,
+    Matrix<float> matrix,
+    ReadOnlySpan<int> adjacentHiddenNodeIndexes,
+    ReadOnlySpan<int> revealedAMCNodes,
+    Span<Turn> turns,
+    ref int turnCount,
+    bool useAllHiddenNodes)
+{
+    var hasReduced = false;
+    Span<int> buffer = stackalloc int[Engine.MaxNodeEdges];
+
+    for (var row = 0; row < matrix.RowCount; row++)
+    {
+        var val = matrix[row, matrix.ColumnCount - 1];
+
+        // if the augment column is zero, then all the 1's in the row are not mines
+        if (val == 0)
+        {
+            for (var c = 0; c < matrix.ColumnCount - 1; c++)
+            {
+                if (matrix[row, c] == 1)
+                {
+                    hasReduced = true;
+
+                    var turn = new Turn(adjacentHiddenNodeIndexes[c], NodeOperation.Reveal);
+
+                    if (!Utilities.Contains(turns.Slice(0, turnCount), turn))
+                    {
+                        turns[turnCount] = turn;
+                        turnCount++;
+                    }
+
+                    // zero'ify this column from all rows in the matrix
+                    for (var ir = 0; ir < matrix.RowCount; ir++)
+                    {
+                        matrix[ir, c] = 0;
+                    }
+                }
+            }
+        }
+
+        // if the sum of the row equals the augmented column, then all the 1's in the row are mines
+        if (val > 0)
+        {
+            float sum = 0;
+            for (var y = 0; y < matrix.ColumnCount - 1; y++)
+            {
+                sum += matrix[row, y];
+            }
+            if (sum == val)
+            {
+                for (var c = 0; c < matrix.ColumnCount - 1; c++)
+                {
+                    if (matrix[row, c] == 1)
+                    {
+                        hasReduced = true;
+
+                        var index = adjacentHiddenNodeIndexes[c];
+                        var turn = new Turn(index, NodeOperation.Flag);
+                        if (!Utilities.Contains(turns.Slice(0, turnCount), turn))
+                        {
+                            turns[turnCount] = turn;
+                            turnCount++;
+                        }
+
+                        // zero'ify this column from all rows in the matrix
+                        for (var ir = 0; ir < matrix.RowCount; ir++)
+                        {
+                            matrix[ir, c] = 0;
+                        }
+
+                        buffer.FillAdjacentNodeIndexes(nodeMatrix.Nodes.Length, index, nodeMatrix.ColumnCount);
+
+                        foreach (var i in buffer)
+                        {
+                            if (i == -1) { continue; }
+                            var rowIndex = revealedAMCNodes.IndexOf(i);
+                            if (rowIndex != -1)
+                            {
+                                matrix[rowIndex, matrix.ColumnCount - 1]--;
+                            }
+                        }
+
+                        if (useAllHiddenNodes)
+                        {
+                            matrix[matrix.RowCount - 1, matrix.ColumnCount - 1]--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (hasReduced)
+    {
+        ReduceMatrix(nodeMatrix, matrix, adjacentHiddenNodeIndexes, revealedAMCNodes, turns, ref turnCount, useAllHiddenNodes);
+    }
+}
+```
+
+Hooray, we have finally won the battle! Except that we didn't. Yet again, I was matched with another obscure bug. This time, it was very rare, only occurring about *once* every few hundred thousand iteration. WIP
+
 {% include minesweeper.html %}
