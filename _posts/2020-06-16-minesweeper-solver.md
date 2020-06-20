@@ -123,32 +123,23 @@ private static void ReduceMatrix(
     var hasReduced = false;
     Span<int> buffer = stackalloc int[Engine.MaxNodeEdges];
 
-    for (var row = 0; row < matrix.RowCount; row++)
+    foreach (var row in matrix)
     {
-        var val = matrix[row, matrix.ColumnCount - 1];
+        var val = row[matrix.ColumnCount - 1];
 
         // if the augment column is zero, then all the 1's in the row are not mines
         if (val == 0)
         {
             for (var c = 0; c < matrix.ColumnCount - 1; c++)
             {
-                if (matrix[row, c] == 1)
+                if (row[c] == 1)
                 {
                     hasReduced = true;
 
                     var turn = new Turn(adjacentHiddenNodeIndexes[c], NodeOperation.Reveal);
 
-                    if (!Utilities.Contains(turns.Slice(0, turnCount), turn))
-                    {
-                        turns[turnCount] = turn;
-                        turnCount++;
-                    }
-
-                    // zero'ify this column from all rows in the matrix
-                    for (var ir = 0; ir < matrix.RowCount; ir++)
-                    {
-                        matrix[ir, c] = 0;
-                    }
+                    TryAddTurn(turns, turn, ref turnCount);
+                    ZeroifyColumn(matrix, c);
                 }
             }
         }
@@ -159,29 +150,21 @@ private static void ReduceMatrix(
             float sum = 0;
             for (var y = 0; y < matrix.ColumnCount - 1; y++)
             {
-                sum += matrix[row, y];
+                sum += row[y];
             }
             if (sum == val)
             {
                 for (var c = 0; c < matrix.ColumnCount - 1; c++)
                 {
-                    if (matrix[row, c] == 1)
+                    if (row[c] == 1)
                     {
                         hasReduced = true;
 
                         var index = adjacentHiddenNodeIndexes[c];
                         var turn = new Turn(index, NodeOperation.Flag);
-                        if (!Utilities.Contains(turns.Slice(0, turnCount), turn))
-                        {
-                            turns[turnCount] = turn;
-                            turnCount++;
-                        }
 
-                        // zero'ify this column from all rows in the matrix
-                        for (var ir = 0; ir < matrix.RowCount; ir++)
-                        {
-                            matrix[ir, c] = 0;
-                        }
+                        TryAddTurn(turns, turn, ref turnCount);
+                        ZeroifyColumn(matrix, c);
 
                         buffer.FillAdjacentNodeIndexes(nodeMatrix.Nodes.Length, index, nodeMatrix.ColumnCount);
 
