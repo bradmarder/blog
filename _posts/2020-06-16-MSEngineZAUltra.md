@@ -57,7 +57,7 @@ Seems like an obvious bug to me. Maybe this logic is true to the original window
 ## Show me your code
 The most complicated aspect of any minesweeper engine is without a doubt the "Chain Reaction" logic. Revealing a node with zero adjacement mines will trigger this chain reaction, revealing other nodes and cascading this behavior until certain boundaries are encountered (flags/mines). I've refactored this snippet of code a ton already, but there is still room for improvement. It may look simple/clean now, but the initial version was an ugly mess (something I assume most people encounter). 
 
-<!-- https://github.com/bradmarder/MSEngine/blob/1f4cd96792ebb9ef29dbf8a0c14688b9ca3f8b42/src/MSEngine.Core/Engine.cs#L222-L251 -->
+https://github.com/bradmarder/MSEngine/blob/1f4cd96792ebb9ef29dbf8a0c14688b9ca3f8b42/src/MSEngine.Core/Engine.cs#L222-L251
 
 ## Ok then
 
