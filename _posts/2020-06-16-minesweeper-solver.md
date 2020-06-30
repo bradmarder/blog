@@ -195,6 +195,41 @@ private static void ReduceMatrix(
 }
 ```
 
-Hooray, we have finally won the battle! Except that we didn't. Yet again, I was matched with another obscure bug. This time, it was very rare, only occurring about *once* every few hundred thousand iteration. WIP
+Hooray, we have finally won the battle! Except that we didn't. Yet again, I was matched with another obscure bug. This time, it was very rare, only occurring about *once* every few hundred thousand iterations. I was only able to discover this by comparing the old solver with the new one, and assuming the new version should *at least* solve everything the old one could. Basically, our solver would fail to calculate a turn for a board when there obviously was one. I inspected the board and nothing seemed to stand out.
+
+```
+111>211_
+>233__1_
+2>2>_211
+1133____
+001>2___
+001122__
+00001___
+00001___
+```
+
+No exceptions were thrown, no odd behavior...just nothing to really go on. This required some tedious line-by-line debugging. At some point, I was erroneously convinced the algo just couldn't handle this scenario. At some point, I manually tested my Gaussian elimination code against a known working version and eureka. I noticed something that hasn't ever happened in hundreds of thousands of games; the correct matrix had *fractions*, and our matrix was just using ints. Ugh. A simple switch to using floats was all that was required. I added a test to make sure we never regress.
+
+```c#
+[Fact]
+public void CalculatesTurnsWhenGaussianEliminationProducesNonIntegers()
+{
+    Span<Node> nodes = stackalloc Node[] {...}; // removed hardcoded nodes for brevity
+    Span<Turn> turns = stackalloc Turn[nodes.Length];
+    var matrix = new Matrix<Node>(nodes, 8);
+
+    var turnCount = MatrixSolver.CalculateTurns(matrix, turns, false);
+
+    Assert.Equal(2, turnCount);
+
+    // changing float to sbyte will cause our solver to generate incorrect turns
+    Assert.NotEqual(6, turnCount);
+
+    Assert.Equal(new Turn(29, NodeOperation.Reveal), turns[0]);
+    Assert.Equal(new Turn(61, NodeOperation.Reveal), turns[1]);
+}
+```
+
+In the next part of this series, I'll discuss yet another obscure bug that *only* manifested itself on intermediate
 
 {% include minesweeper.html %}
