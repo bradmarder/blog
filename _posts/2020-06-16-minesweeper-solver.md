@@ -230,6 +230,6 @@ public void CalculatesTurnsWhenGaussianEliminationProducesNonIntegers()
 }
 ```
 
-In the next part of this series, I'll discuss yet another obscure bug that *only* manifested itself on intermediate
+In the next part of this series, I'll discuss a painful, yet very beautiful "Schroedinbug" that manifested itself on intermediate
 
 {% include minesweeper.html %}
